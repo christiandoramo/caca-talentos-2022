@@ -1,64 +1,93 @@
-from datetime import date
 from datetime import datetime
 import ModuloRepositorio as r
 import ModuloSistema as s
-import ModuloJanela as j
+import PySimpleGUI as sg
 
+# dados de produtos A,B,C e Repositorio predefinidos
 repositorio = r.Repositorio(0, 0, 0, 0)
-
-repositorio.ClientesN = repositorio.ClientesN+1
-cliente = s.Cliente("Jose", "jos@email", "99999",
-                  date(1999, 1, 2), repositorio.ClientesN)
-
-repositorio.ClientesN = repositorio.ClientesN+1
-cliente2 = s.Cliente("Mario", "jos@email", "99999",
-                   date(1999, 1, 2), repositorio.ClientesN)
-
-repositorio.AtendentesN = repositorio.AtendentesN+1
-atendente = s.Atendente("Maria", "mar@email", "88888",
-                      date(1997, 1, 3), repositorio.AtendentesN)
-
 repositorio.ProdutosN = repositorio.ProdutosN+1
-produtoA = s.Produto(repositorio.ProdutosN, "prodA", "aaaaaa", 22)
+produto1 = s.Produto(repositorio.ProdutosN, "Produto 1", "aa aaaa", 12)
 repositorio.ProdutosN = repositorio.ProdutosN+1
-produtoB = s.Produto(repositorio.ProdutosN, "prodB", "bbbbbb", 33.5)
+produto2 = s.Produto(repositorio.ProdutosN, "Produto 2", "bbbb bb", 30)
 repositorio.ProdutosN = repositorio.ProdutosN+1
-produtoC = s.Produto(repositorio.ProdutosN, "prodC", "cccccc", 55)
+produto3 = s.Produto(repositorio.ProdutosN, "Produto 3", "cccc cc", 50)
 
-repositorio.VendasN = repositorio.VendasN+1
-venda1 = s.Venda(repositorio.VendasN, produtoA, 10,
-               atendente, cliente, datetime.now())
-repositorio.VendasN = repositorio.VendasN+1
-venda2 = s.Venda(repositorio.VendasN, produtoB, 8,
-               atendente, cliente, datetime.now())
-repositorio.VendasN = repositorio.VendasN+1
-venda3 = s.Venda(repositorio.VendasN, produtoC, 6,
-               atendente, cliente, datetime.now())
+# layouts
+layout1 = [
+    [sg.Text("Nome do Atendente")],
+    [sg.InputText(key="nomeAtendente")],
+    [sg.Text("Nome do Cliente")],
+    [sg.InputText(key="nomeCliente")],
+    [sg.Text("Data de Nascimento")],
+    [sg.InputText(key="nascimento")],
+    [sg.Text("Email")],
+    [sg.InputText(key="email")],
+    [sg.Text("Telefone")],
+    [sg.InputText(key="telefone")],
+    [sg.Button("Iniciar Sessão Cliente-Atendente"), sg.Button("Cancelar")],
+]
 
-repositorio.addListaVendas(venda1)
-repositorio.addListaVendas(venda2)
-repositorio.addListaVendas(venda3)
+layout2 = [
+    [sg.Text("Produto a ser vendido")],
+    [sg.InputText(key="produto")],  # 1, 2 ou 3...
+    [sg.Text("Quantidade a ser vendida")],
+    [sg.InputText(key="quantidade")],
+    [sg.Button("Vender"), sg.Button("Cancelar")],
+    # [sg.Text("ID VENDA | DATA DE VENDA | ID CLIENTE | CLIENTE | ID ATENDENTE | ATENDENTE | ID PRODUTO | PRODUTO | PRECO | QUANTIDADE | VALOR TOTAL")],
+    [sg.Text("", key="dados")],
 
-repositorio.listarVendas()
+]
 
-repositorio.VendasN = repositorio.VendasN+1
-venda4 = s.Venda(repositorio.VendasN, produtoA, 0,
-               atendente, cliente2, datetime.now())
-repositorio.VendasN = repositorio.VendasN+1
-venda5 = s.Venda(repositorio.VendasN, produtoB, 5,
-               atendente, cliente, datetime.now())
-repositorio.VendasN = repositorio.VendasN+1
-venda6 = s.Venda(repositorio.VendasN, produtoC, 6,
-               atendente, cliente2, datetime.now())
-repositorio.VendasN = repositorio.VendasN+1
-venda7 = s.Venda(repositorio.VendasN, produtoC, 10,
-               atendente, cliente2, datetime.now())
+# janelas
+janela = sg.Window("Inicio da Sessão", layout1)
 
-repositorio.addListaVendas(venda4)
-repositorio.addListaVendas(venda5)
-repositorio.addListaVendas(venda6)
-repositorio.addListaVendas(venda7)
 
-repositorio.listarVendas()
-repositorio.escreverFile()
-repositorio.lerFile()
+cliente = None
+atendente = None
+sessao = False
+while True:
+    evento, valores = janela.read()
+    if evento == sg.WIN_CLOSED or evento == "Cancelar":
+        break
+    if evento == "Iniciar Sessão Cliente-Atendente":
+        nomeAtendente = valores["nomeAtendente"]
+        nomeCliente = valores["nomeCliente"]
+        email = valores["email"]
+        telefone = valores["telefone"]
+        nascimento = valores["nascimento"]
+        if (nomeAtendente and nomeCliente and email and telefone and nascimento):
+            repositorio.ClientesN += 1
+            cliente = s.Cliente(nomeCliente, email, telefone,
+                                nascimento, repositorio.ClientesN)
+            repositorio.AtendentesN += 1
+            atendente = s.Atendente(nomeAtendente, repositorio.AtendentesN)
+            sessao = True
+            break
+janela.close()
+
+if sessao:
+    janela = sg.Window("Sisteminha de Vendas", layout2)
+
+    while True:
+        evento, valores = janela.read()
+        if evento == sg.WIN_CLOSED or evento == "Cancelar":
+            break
+        if evento == "Vender":
+            produto = valores["produto"]
+            quantidade = valores["quantidade"]
+            if (produto == '1' or produto == '2' or produto == '3'):
+                if (quantidade != '0' and quantidade != ''):
+                    if produto=='1':
+                        produto = produto1
+                    elif produto=='2':
+                        produto = produto2
+                    else:
+                        produto = produto3
+                    quantidade = int(quantidade)
+                    repositorio.VendasN += 1
+                    venda = s.Venda(repositorio.VendasN, produto, quantidade, atendente, cliente, datetime.now())
+                    repositorio.addListaVendas(venda)
+                    repositorio.escreverFile()  # Implementado num arquivo .csv
+                    camposdados = repositorio.lerFile()
+                    janela["dados"].update(camposdados)
+    janela.close()

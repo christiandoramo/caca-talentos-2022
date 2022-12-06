@@ -9,11 +9,8 @@ class Produto(object):
 
 #Herança Superclasse
 class Pessoa(object):
-  def __init__(self,nome,email,telefone, dataNascimento):
+  def __init__(self,nome):
     self.nome = nome
-    self.email = email
-    self.telefone = telefone
-    self.dataNascimento = dataNascimento
   def calcularIdade(self): 
     hoje = datetime.date.today()
     idade = hoje.year - self.dataNascimento.year - ((hoje.month, hoje.day)<
@@ -24,14 +21,16 @@ class Pessoa(object):
 class Cliente(Pessoa):
   #Polimorfismo
   def __init__(self,nome,email,telefone, dataNascimento,idCliente):
-    super().__init__(nome,email,telefone, dataNascimento)
+    super().__init__(nome)
     self.idCliente = idCliente
-
+    self.telefone = telefone
+    self.email = email
+    self.dataNascimento = dataNascimento
 #Herança
 class Atendente(Pessoa):
   #Polimorfismo
-  def __init__(self,nome,email,telefone, dataNascimento,idAtendente):
-    super().__init__(nome,email,telefone, dataNascimento)
+  def __init__(self,nome,idAtendente):
+    super().__init__(nome)
     self.idAtendente = idAtendente
 
 class Venda(object):
