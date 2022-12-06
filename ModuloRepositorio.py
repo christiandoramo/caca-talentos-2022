@@ -13,20 +13,6 @@ class Repositorio:
     def addListaVendas(self, venda):
         self.listaVendas.append(venda)
 
-    def listarVendas(self): # No Console
-        for venda in self.listaVendas:
-            print("ID VENDA: ", venda.idVenda, " | DATA DE VENDA: ",
-                  venda.dataVenda.strftime("%m/%d/%Y, %H:%M:%S"))
-            print("ID CLIENTE: ", venda.cliente.idCliente,
-                  " | CLIENTE: ", venda.cliente.nome)
-            print("ID ATENDENTE: ", venda.atendente.idAtendente,
-                  " | ATENDENTE: ", venda.atendente.nome)
-            print("ID PRODUTO: ", venda.produto.idProduto,
-                  " | PRODUTO: ", venda.produto.nome)
-            print("PRECO PRODUTO: ", venda.produto.preco,
-                  " | QUANTIDADE: ", venda.quantidade)
-            print("VALOR TOTAL: ", venda.calcularVenda(), "\n")
-
     def escreverFile(self):
         # PERSISTENCIA LEITURA E ESCRITA
         campos = ["ID VENDA", "DATA DE VENDA", "ID CLIENTE", "CLIENTE", "ID ATENDENTE",
@@ -40,13 +26,10 @@ class Repositorio:
                                venda.produto.idProduto), str(venda.produto.nome),
                            str(venda.produto.preco), str(venda.quantidade), str(venda.calcularVenda())])
         nomearquivo = "repositorio.csv"
-    #try:
         with open(nomearquivo, 'w') as arquivocsv:
             escritorcsv = csv.writer(arquivocsv)
             escritorcsv.writerow(campos)  # linha 1 - 1 array de campos
             escritorcsv.writerows(linhas)  # linhas>1 - varios arrays de dados
-    #except:
-        #print("não foi possivel acessar o arquivo")
 
     def lerFile(self):
         # PERSISTENCIA LEITURA E ESCRITA
@@ -75,5 +58,3 @@ class Repositorio:
                 arrayStrings.append(stringDados + '\n')
                 print('\n')
         return arrayStrings
-        #except:
-            #print("não foi possivel acessar o arquivo")
