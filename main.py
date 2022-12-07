@@ -24,8 +24,15 @@ layout1 = [
     [sg.InputText(key="email")],
     [sg.Text("Telefone")],
     [sg.InputText(key="telefone")],
-    [sg.Button("Iniciar Sessão Cliente-Atendente"), sg.Button("Cancelar")],
+    [sg.Button("Iniciar Sessão"), sg.Button("Cancelar")],
 ]
+
+
+
+
+headings = ["ID VENDA", "DATA DE VENDA","ID CLIENTE","CLIENTE","ID ATENDENTE","ATENDENTE",
+                "ID PRODUTO", "PRODUTO", "PRECO", "QUANTIDADE", "VALOR TOTAL"]
+linhas = 0
 
 layout2 = [
     [sg.Text("Produto a ser vendido")],
@@ -33,14 +40,18 @@ layout2 = [
     [sg.Text("Quantidade a ser vendida")],
     [sg.InputText(key="quantidade")],
     [sg.Button("Vender"), sg.Button("Cancelar")],
-    # [sg.Text("ID VENDA | DATA DE VENDA | ID CLIENTE | CLIENTE | ID ATENDENTE | ATENDENTE | ID PRODUTO | PRODUTO | PRECO | QUANTIDADE | VALOR TOTAL")],
-    [sg.Text("", key="dados")],
-
+    [sg.Table(values = [[]], headings = headings,
+                max_col_width=35,
+                auto_size_columns=True,
+                display_row_numbers=True,
+                justification="right",
+                num_rows=10,
+                row_height=35,
+                key="tabela")]
 ]
 
 # janelas
 janela = sg.Window("Inicio da Sessão", layout1)
-
 
 cliente = None
 atendente = None
@@ -49,7 +60,7 @@ while True:
     evento, valores = janela.read()
     if evento == sg.WIN_CLOSED or evento == "Cancelar":
         break
-    if evento == "Iniciar Sessão Cliente-Atendente":
+    if evento == "Iniciar Sessão":
         nomeAtendente = valores["nomeAtendente"]
         nomeCliente = valores["nomeCliente"]
         email = valores["email"]
@@ -66,8 +77,7 @@ while True:
 janela.close()
 
 if sessao:
-    janela = sg.Window("Sisteminha de Vendas", layout2)
-
+    janela = sg.Window("Sessão de Vendas", layout2)
     while True:
         evento, valores = janela.read()
         if evento == sg.WIN_CLOSED or evento == "Cancelar":
@@ -77,17 +87,19 @@ if sessao:
             quantidade = valores["quantidade"]
             if (produto == '1' or produto == '2' or produto == '3'):
                 if (quantidade != '0' and quantidade != ''):
-                    if produto=='1':
+                    if produto == '1':
                         produto = produto1
-                    elif produto=='2':
+                    elif produto == '2':
                         produto = produto2
                     else:
                         produto = produto3
                     quantidade = int(quantidade)
                     repositorio.VendasN += 1
-                    venda = s.Venda(repositorio.VendasN, produto, quantidade, atendente, cliente, datetime.now())
+                    venda = s.Venda(repositorio.VendasN, produto,
+                                    quantidade, atendente, cliente, datetime.now())
                     repositorio.addListaVendas(venda)
                     repositorio.escreverFile()  # Implementado num arquivo .csv
-                    camposdados = repositorio.lerFile()
-                    janela["dados"].update(camposdados)
+                    linhas +=1
+                    dados = repositorio.lerFile()
+                    janela["tabela"].update(values = dados[len(dados)-1]) # ultimo array de arrays
     janela.close()

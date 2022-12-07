@@ -15,8 +15,8 @@ class Repositorio:
 
     def escreverFile(self):
         # PERSISTENCIA LEITURA E ESCRITA
-        campos = ["ID VENDA", "DATA DE VENDA", "ID CLIENTE", "CLIENTE", "ID ATENDENTE",
-                  "ATENDENTE", "ID PRODUTO", "PRODUTO", "PRECO", "QUANTIDADE", "VALOR TOTAL"]
+        campos = ["ID VENDA","DATA DE VENDA", "ID CLIENTE","CLIENTE","ID ATENDENTE",
+                  "ATENDENTE","ID PRODUTO","PRODUTO","PRECO","QUANTIDADE","VALOR TOTAL"]
         linhas = []
         for venda in self.listaVendas:
             linhas.append([str(venda.idVenda), str(venda.dataVenda), str(venda.cliente.idCliente),
@@ -34,27 +34,12 @@ class Repositorio:
     def lerFile(self):
         # PERSISTENCIA LEITURA E ESCRITA
         nomearquivo = "repositorio.csv"
-        campos = []
-        linhas = []
-        #try:
         arrayStrings = []
+        arrayArrayStrings = [[]]
         with open(nomearquivo, 'r') as arquivocsv:
             leitorcsv = csv.reader(arquivocsv)
-            # campos - retorn primeira linha e pula uma
-            campos = next(leitorcsv)
-            for linha in leitorcsv:
-                linhas.append(linha)
-        # pega o numero total de linhas
-            print("Numero total de linhas: %d" % (leitorcsv.line_num))
-            print('Campos:' + ', '.join(campo for campo in campos))
-            stringCampos = 'Campos:' + ', '.join(campo for campo in campos)
-            arrayStrings.append(stringCampos + '\n')
-            
-            for linha in linhas:
-                # conversao de cada coluna de uma linha
-                for col in linha:
-                    print("%5s" % col, end=" "),
-                stringDados = 'Dados:' + ', '.join(dado for dado in linha)
-                arrayStrings.append(stringDados + '\n')
-                print('\n')
-        return arrayStrings
+            next(leitorcsv)# campos - retorn primeira linha e pula uma
+            for linha in leitorcsv: #pegando cada linha a abaixo de campos
+                arrayStrings.append(linha) #pegando cada array
+            arrayArrayStrings.append(arrayStrings)
+            return arrayArrayStrings # retorna ultimo array string de ultima posicao
