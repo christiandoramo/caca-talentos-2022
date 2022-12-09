@@ -35,11 +35,12 @@ headings = ["ID VENDA", "DATA DE VENDA","ID CLIENTE","CLIENTE","ID ATENDENTE","A
 linhas = 0
 
 layout2 = [
-    [sg.Text("Produto a ser vendido")],
+    [sg.Text("Produto a ser vendido"), sg.Text("Produto 1 - 1 | Produto 2 - 2 | Produto 3 - 3")],
     [sg.InputText(key="produto")],  # 1, 2 ou 3...
     [sg.Text("Quantidade a ser vendida")],
     [sg.InputText(key="quantidade")],
     [sg.Button("Vender"), sg.Button("Cancelar")],
+    [sg.Text("", key = "valortotal")],
     [sg.Table(values = [[]], headings = headings,
                 max_col_width=35,
                 auto_size_columns=True,
@@ -101,5 +102,7 @@ if sessao:
                     repositorio.escreverFile()  # Implementado num arquivo .csv
                     linhas +=1
                     dados = repositorio.lerFile()
+                    valorAtual = repositorio.calcularTotal(repositorio.listaVendas,len(repositorio.listaVendas))
                     janela["tabela"].update(values = dados[len(dados)-1]) # ultimo array de arrays
+                    janela["valortotal"].update(f"Valor total das vendas: R${valorAtual}")
     janela.close()

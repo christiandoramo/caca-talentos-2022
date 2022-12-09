@@ -12,6 +12,13 @@ class Repositorio:
 
     def addListaVendas(self, venda):
         self.listaVendas.append(venda)
+        
+    def calcularTotal(self,vetor, tamanho):
+        # RECURSAO
+        if tamanho==0:
+            return 0
+        else:
+            return vetor[tamanho-1].calcularVenda() + self.calcularTotal(vetor,tamanho-1)
 
     def escreverFile(self):
         # PERSISTENCIA LEITURA E ESCRITA
