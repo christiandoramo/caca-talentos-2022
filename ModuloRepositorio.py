@@ -2,7 +2,7 @@ import csv
 
 class Repositorio:
     listaVendas = list()
-
+    idSessao = 0
     def __init__(self, AtendentesN, ClientesN, ProdutosN, VendasN):
         # numero de registrados
         self.AtendentesN = AtendentesN
@@ -32,15 +32,15 @@ class Repositorio:
                            str(venda.atendente.nome), str(
                                venda.produto.idProduto), str(venda.produto.nome),
                            str(venda.produto.preco), str(venda.quantidade), str(venda.calcularVenda())])
-        nomearquivo = "repositorio.csv"
+        nomearquivo = f"Sessao.csv"
         with open(nomearquivo, 'w') as arquivocsv:
             escritorcsv = csv.writer(arquivocsv)
             escritorcsv.writerow(campos)  # linha 1 - 1 array de campos
             escritorcsv.writerows(linhas)  # linhas>1 - varios arrays de dados
-
+            
     def lerFile(self):
         # PERSISTENCIA LEITURA E ESCRITA
-        nomearquivo = "repositorio.csv"
+        nomearquivo = "Sessao.csv"
         arrayStrings = []
         arrayArrayStrings = [[]]
         with open(nomearquivo, 'r') as arquivocsv:
@@ -50,3 +50,26 @@ class Repositorio:
                 arrayStrings.append(linha) #pegando cada array
             arrayArrayStrings.append(arrayStrings)
             return arrayArrayStrings # retorna ultimo array string de ultima posicao
+            
+    def fimDeSessao(self):
+        # PERSISTENCIA LEITURA E ESCRITA
+        # FUNCAO SALVA AS SESSAO EM UM ARQUIVO/REPOSITORIO csv
+        campos = ["ID VENDA","DATA DE VENDA", "ID CLIENTE","CLIENTE","ID ATENDENTE",
+                  "ATENDENTE","ID PRODUTO","PRODUTO","PRECO","QUANTIDADE","VALOR TOTAL"]
+        linhas = []
+        # PERSISTENCIA LEITURA E ESCRITA
+        campos = ["ID VENDA","DATA DE VENDA", "ID CLIENTE","CLIENTE","ID ATENDENTE",
+                  "ATENDENTE","ID PRODUTO","PRODUTO","PRECO","QUANTIDADE","VALOR TOTAL"]
+        linhas = []
+        for venda in self.listaVendas:
+            linhas.append([str(venda.idVenda), str(venda.dataVenda), str(venda.cliente.idCliente),
+                           str(venda.cliente.nome), str(
+                               venda.atendente.idAtendente),
+                           str(venda.atendente.nome), str(
+                               venda.produto.idProduto), str(venda.produto.nome),
+                           str(venda.produto.preco), str(venda.quantidade), str(venda.calcularVenda())])
+        nomearquivo = "RepositorioFixo.csv"
+        with open(nomearquivo, 'a') as arquivocsv:
+            escritorcsv = csv.writer(arquivocsv)
+            escritorcsv.writerow(campos)  # linha 1 - 1 array de campos
+            escritorcsv.writerows(linhas)  # linhas>1 - varios arrays de dados

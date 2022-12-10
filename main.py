@@ -1,9 +1,16 @@
 from datetime import datetime
+import PySimpleGUI as sg
 import ModuloRepositorio as r
 import ModuloSistema as s
-import PySimpleGUI as sg
 
-# dados de produtos A,B,C e Repositorio predefinidos
+# Equipe
+#   Christian Oliveira do Ramo
+#   Paulo Andre Oliveira do Ramo
+
+
+# Para instalar o PySimpleGUI -> digite no terminal pip install PySimpleGUI
+
+# dados de produtos 1,2,3 e Repositorio predefinidos
 repositorio = r.Repositorio(0, 0, 0, 0)
 repositorio.ProdutosN = repositorio.ProdutosN+1
 produto1 = s.Produto(repositorio.ProdutosN, "Produto 1", "aa aaaa", 12)
@@ -27,16 +34,13 @@ layout1 = [
     [sg.Button("Iniciar Sessão"), sg.Button("Cancelar")],
 ]
 
-
-
-
 headings = ["ID VENDA", "DATA DE VENDA","ID CLIENTE","CLIENTE","ID ATENDENTE","ATENDENTE",
                 "ID PRODUTO", "PRODUTO", "PRECO", "QUANTIDADE", "VALOR TOTAL"]
-linhas = 0
-
 layout2 = [
-    [sg.Text("Produto a ser vendido"), sg.Text("Produto 1 - 1 | Produto 2 - 2 | Produto 3 - 3")],
-    [sg.InputText(key="produto")],  # 1, 2 ou 3...
+    [sg.Text("Produto a ser vendido")],
+    [sg.Radio("Produto 1", "p", default=False,key = "p1"),
+     sg.Radio("Produto 2", "p", default=False,key = "p2"),
+     sg.Radio("Produto 3", "p", default=False,key = "p3")],
     [sg.Text("Quantidade a ser vendida")],
     [sg.InputText(key="quantidade")],
     [sg.Button("Vender"), sg.Button("Cancelar")],
@@ -57,6 +61,8 @@ janela = sg.Window("Inicio da Sessão", layout1)
 cliente = None
 atendente = None
 sessao = False
+
+#ITERAÇÕES
 while True:
     evento, valores = janela.read()
     if evento == sg.WIN_CLOSED or evento == "Cancelar":
@@ -77,20 +83,25 @@ while True:
             break
 janela.close()
 
+# CONDICIONAIS
 if sessao:
     janela = sg.Window("Sessão de Vendas", layout2)
     while True:
         evento, valores = janela.read()
         if evento == sg.WIN_CLOSED or evento == "Cancelar":
+            repositorio.fimDeSessao()
             break
         if evento == "Vender":
-            produto = valores["produto"]
+            produto = None
+            p1 = valores["p1"]
+            p2 = valores["p2"]
+            p3 = valores["p3"]
             quantidade = valores["quantidade"]
-            if (produto == '1' or produto == '2' or produto == '3'):
+            if (p1 or p2 or p3):
                 if (quantidade != '0' and quantidade != ''):
-                    if produto == '1':
+                    if p1:
                         produto = produto1
-                    elif produto == '2':
+                    elif p2:
                         produto = produto2
                     else:
                         produto = produto3
@@ -100,7 +111,6 @@ if sessao:
                                     quantidade, atendente, cliente, datetime.now())
                     repositorio.addListaVendas(venda)
                     repositorio.escreverFile()  # Implementado num arquivo .csv
-                    linhas +=1
                     dados = repositorio.lerFile()
                     valorAtual = repositorio.calcularTotal(repositorio.listaVendas,len(repositorio.listaVendas))
                     janela["tabela"].update(values = dados[len(dados)-1]) # ultimo array de arrays
