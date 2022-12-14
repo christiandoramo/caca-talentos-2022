@@ -48,8 +48,7 @@ layout2 = [
     [sg.Table(values = [[]], headings = headings,
                 max_col_width=35,
                 auto_size_columns=True,
-                display_row_numbers=True,
-                justification="right",
+                justification="center",
                 num_rows=10,
                 row_height=35,
                 key="tabela")]
